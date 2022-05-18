@@ -14,7 +14,8 @@ public enum PropertiesEnum {
     PASSWORD("database.pass"),
     SCHEMA("database.schema"),
     HEADER("output.header"),
-    DELIMITER("output.delimiter");
+    DELIMITER("output.delimiter"),
+    DOUBLEQUOTE("output.doublequote");
 
     private static Properties properties;
     

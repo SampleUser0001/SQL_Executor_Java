@@ -4,7 +4,7 @@
   <groupId>tool.sqlexecutor</groupId>
   <artifactId>SQLExecutor</artifactId>
   <packaging>jar</packaging>
-  <version>java8-ver0.1-SNAPSHOT</version>
+  <version>java8-ver0.1.1-SNAPSHOT</version>
   <name>SQLExecutor</name>
   <url>http://maven.apache.org</url>
 
@@ -21,6 +21,16 @@
       <groupId>com.oracle.ojdbc</groupId>
       <artifactId>ojdbc8</artifactId>
       <version>19.3.0.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-api</artifactId>
+      <version>2.17.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.logging.log4j</groupId>
+      <artifactId>log4j-core</artifactId>
+      <version>2.17.1</version>
     </dependency>
     <dependency>
       <groupId>junit</groupId>

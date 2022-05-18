@@ -4,7 +4,7 @@
   <groupId>tool.sqlexecutor</groupId>
   <artifactId>SQLExecutor</artifactId>
   <packaging>jar</packaging>
-  <version>java11-ver0.1-SNAPSHOT</version>
+  <version>java11-ver0.1.1-SNAPSHOT</version>
   <name>SQLExecutor</name>
   <url>http://maven.apache.org</url>
 

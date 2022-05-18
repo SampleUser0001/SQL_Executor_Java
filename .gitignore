@@ -1,5 +1,5 @@
 target/*
-target/SQLExecutor*dependency*.jar
+target/SQLExecutor*dependencies.jar 
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -14,6 +14,8 @@ buildNumber.properties
 # App
 /src/main/resources/*
 !/src/main/resources/sample.connection.properties
+!/src/main/resources/log4j2.xml
 
 # Sample
 /output
+/logs
