@@ -19,6 +19,7 @@ import java.sql.SQLException;
 
 import lombok.Getter;
 
+import tool.sqlexecutor.enums.DatabaseEnum;
 import tool.sqlexecutor.enums.PropertiesEnum;
 
 import org.apache.logging.log4j.LogManager;
@@ -55,7 +56,6 @@ public class App {
      * @Exception IOException
      */
     public void execute(String[] args) throws IOException {
-        logger.debug(String.format("args.length : %d", args.length));
         // PropertiesEnum.load(
         //     Paths.get(
         //         System.getProperty("user.dir"),
@@ -70,6 +70,7 @@ public class App {
         // sql.append("select * from regions");
 
         logger.info("SQL Executor Start.");
+        logger.debug(String.format("args.length : %d", args.length));
         
         this.load(args);
         String result = this.executeSQL(
@@ -96,7 +97,7 @@ public class App {
         final String PROPERTIES_PATH = args[argsIndex++];
         logger.info(String.format("PROPERTIES_PATH : %s", PROPERTIES_PATH));
         PropertiesEnum.load(Paths.get(PROPERTIES_PATH));
-        
+
         final String COLUMN_LIST_FILE = args[argsIndex++];
         logger.info(String.format("COLUMN_LIST_FILE : %s", COLUMN_LIST_FILE));
         this.columnList = Files.readAllLines(Paths.get(COLUMN_LIST_FILE));
@@ -112,8 +113,7 @@ public class App {
         this.outputPath = Paths.get(OUTPUT_FILE_PATH);
 
         this.url = String.format(
-            URL_FORMAT,
-            PropertiesEnum.DATABASE.getPropertiesValue(),
+            DatabaseEnum.valueOf(PropertiesEnum.DATABASE.getPropertiesValue()).getUrl(),
             PropertiesEnum.HOST.getPropertiesValue(),
             Integer.parseInt(PropertiesEnum.PORT.getPropertiesValue()),
             PropertiesEnum.SCHEMA.getPropertiesValue());
@@ -200,6 +200,7 @@ public class App {
     }
     
     public static void main( String[] args ) throws IOException {
+
         new App().execute(args);
     }
 }
