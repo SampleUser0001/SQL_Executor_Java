@@ -1,38 +1,63 @@
 package tool.sqlexecutor;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import java.nio.file.Paths;
+import java.lang.StringBuffer;
+
+import org.junit.Test;
+import org.junit.Before;
+
+import static org.hamcrest.MatcherAssert.*;
+import static org.hamcrest.Matchers.*;
+
+import tool.sqlexecutor.enums.PropertiesEnum;
+
+import java.io.IOException;
 
 /**
  * Unit test for simple App.
  */
-public class AppTest 
-    extends TestCase
-{
-    /**
-     * Create the test case
-     *
-     * @param testName name of the test case
-     */
-    public AppTest( String testName )
-    {
-        super( testName );
-    }
+public class AppTest {
 
-    /**
-     * @return the suite of tests being tested
-     */
-    public static Test suite()
-    {
-        return new TestSuite( AppTest.class );
-    }
+    private static final String TEST_RESOURCES_HOME = Paths.get(System.getProperty("user.dir"), "src", "test", "resources").toString();
 
-    /**
-     * Rigourous Test :-)
-     */
-    public void testApp()
-    {
-        assertTrue( true );
+    private App app;
+
+    @Before
+    public void setup() {
+        app = new App();
     }
+    
+    /**
+     * SQLiteを使用した実行結果取得テスト。
+     * ヘッダ：あり, デリミタ:タブ, ダブルクォーテーション:なし
+     */
+    @Test
+    public void testBySQLite() throws IOException {
+        String[] args = {
+            Paths.get(TEST_RESOURCES_HOME , "connection.properties").toString(),
+            Paths.get(TEST_RESOURCES_HOME , "test_column_list.txt").toString(),
+            Paths.get(TEST_RESOURCES_HOME , "test.sql").toString(),
+            Paths.get(TEST_RESOURCES_HOME).toString()
+        };
+        app.load(args);
+        String result = app.executeSQL(
+            app.getUrl(),
+            PropertiesEnum.USER.getPropertiesValue(),
+            PropertiesEnum.PASSWORD.getPropertiesValue(),
+            app.getSql(),
+            app.getColumnList(),
+            Boolean.parseBoolean(PropertiesEnum.HEADER.getPropertiesValue()),
+            app.getDq()
+        );
+        StringBuffer expected = new StringBuffer();
+        expected.append("id\tvalue").append(System.getProperty("line.separator"));
+        expected.append("1\thoge").append(System.getProperty("line.separator"));
+        expected.append("2\tpiyo").append(System.getProperty("line.separator"));
+        expected.append("3\tfuga").append(System.getProperty("line.separator"));
+        
+        assertThat(result, is(equalTo(expected.toString())));
+
+    }
+    
+
 }
