@@ -4,7 +4,7 @@
   <groupId>tool.sqlexecutor</groupId>
   <artifactId>SQLExecutor</artifactId>
   <packaging>jar</packaging>
-  <version>java8-ver0.1.1-SNAPSHOT</version>
+  <version>java8-ver0.1.2-SNAPSHOT</version>
   <name>SQLExecutor</name>
   <url>http://maven.apache.org</url>
 
@@ -28,6 +28,12 @@
       <groupId>com.oracle.ojdbc</groupId>
       <artifactId>ojdbc8</artifactId>
       <version>19.3.0.0</version>
+    </dependency>
+    <!-- https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc -->
+    <dependency>
+      <groupId>org.xerial</groupId>
+      <artifactId>sqlite-jdbc</artifactId>
+      <version>3.36.0.3</version>
     </dependency>
     <dependency>
       <groupId>org.apache.logging.log4j</groupId>

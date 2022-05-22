@@ -34,16 +34,13 @@ public class AppTest {
     @Test
     public void testBySQLite() throws IOException {
         String[] args = {
-            Paths.get(TEST_RESOURCES_HOME , "connection.properties").toString(),
+            Paths.get(TEST_RESOURCES_HOME , "sample.connection.properties").toString(),
             Paths.get(TEST_RESOURCES_HOME , "test_column_list.txt").toString(),
             Paths.get(TEST_RESOURCES_HOME , "test.sql").toString(),
             Paths.get(TEST_RESOURCES_HOME).toString()
         };
         app.load(args);
         String result = app.executeSQL(
-            app.getUrl(),
-            PropertiesEnum.USER.getPropertiesValue(),
-            PropertiesEnum.PASSWORD.getPropertiesValue(),
             app.getSql(),
             app.getColumnList(),
             Boolean.parseBoolean(PropertiesEnum.HEADER.getPropertiesValue()),
