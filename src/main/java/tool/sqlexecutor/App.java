@@ -19,8 +19,8 @@ import java.sql.SQLException;
 
 import lombok.Getter;
 
-import tool.sqlexecutor.enums.DatabaseEnum;
 import tool.sqlexecutor.enums.PropertiesEnum;
+import tool.sqlexecutor.enums.DatabaseEnum;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -43,40 +43,20 @@ public class App {
     private Path outputPath;
     
     @Getter
-    private String url;
-    
-    @Getter
     private String dq;
-    
-    public static final String URL_FORMAT = "jdbc:%s:thin:@%s:%d/%s";
-    
+
     /**
      * ツール実行する。
      * @param String[] args 起動引数
      * @Exception IOException
      */
     public void execute(String[] args) throws IOException {
-        // PropertiesEnum.load(
-        //     Paths.get(
-        //         System.getProperty("user.dir"),
-        //         "src","main","resources","connection.properties"
-        //     )
-        // );
-        // StringBuffer sql = new StringBuffer();
-        // sql.append("SELECT OWNER, TABLE_NAME").append("\n");
-        // sql.append("FROM ALL_TABLES").append("\n");
-        // sql.append("ORDER BY OWNER,TABLE_NAME").append("\n");
-
-        // sql.append("select * from regions");
+        logger.debug(String.format("args.length : %d", args.length));
 
         logger.info("SQL Executor Start.");
-        logger.debug(String.format("args.length : %d", args.length));
         
         this.load(args);
         String result = this.executeSQL(
-            this.url,
-            PropertiesEnum.USER.getPropertiesValue(),
-            PropertiesEnum.PASSWORD.getPropertiesValue(),
             this.sql,
             this.columnList,
             Boolean.parseBoolean(PropertiesEnum.HEADER.getPropertiesValue()),
@@ -97,7 +77,7 @@ public class App {
         final String PROPERTIES_PATH = args[argsIndex++];
         logger.info(String.format("PROPERTIES_PATH : %s", PROPERTIES_PATH));
         PropertiesEnum.load(Paths.get(PROPERTIES_PATH));
-
+        
         final String COLUMN_LIST_FILE = args[argsIndex++];
         logger.info(String.format("COLUMN_LIST_FILE : %s", COLUMN_LIST_FILE));
         this.columnList = Files.readAllLines(Paths.get(COLUMN_LIST_FILE));
@@ -111,12 +91,6 @@ public class App {
         final String OUTPUT_FILE_PATH = args[argsIndex++];
         logger.info(String.format("OUTPUT_FILE_PATH : %s", OUTPUT_FILE_PATH));
         this.outputPath = Paths.get(OUTPUT_FILE_PATH);
-
-        this.url = String.format(
-            DatabaseEnum.valueOf(PropertiesEnum.DATABASE.getPropertiesValue()).getUrl(),
-            PropertiesEnum.HOST.getPropertiesValue(),
-            Integer.parseInt(PropertiesEnum.PORT.getPropertiesValue()),
-            PropertiesEnum.SCHEMA.getPropertiesValue());
 
         this.dq = Boolean.parseBoolean(PropertiesEnum.DOUBLEQUOTE.getPropertiesValue()) ? "\"" : ""; 
         
@@ -135,9 +109,6 @@ public class App {
      * @return String SQLの実行結果
      */
     public String executeSQL(
-        String url,
-        String user,
-        String password,
         String sql,
         List<String> columnList,
         boolean header,
@@ -146,10 +117,7 @@ public class App {
         logger.info("executeSQL start.");
             
         StringBuilder builder = new StringBuilder();
-        try (Connection conn = DriverManager.getConnection(
-                url, 
-                PropertiesEnum.USER.getPropertiesValue(),
-                PropertiesEnum.PASSWORD.getPropertiesValue());
+        try (Connection conn = DatabaseEnum.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             try (ResultSet rs = ps.executeQuery()){
                     if(Boolean.parseBoolean(PropertiesEnum.HEADER.getPropertiesValue())) {
@@ -200,7 +168,6 @@ public class App {
     }
     
     public static void main( String[] args ) throws IOException {
-
         new App().execute(args);
     }
 }

@@ -13,10 +13,10 @@ public enum PropertiesEnum {
     USER("database.user"),
     PASSWORD("database.pass"),
     SCHEMA("database.schema"),
+    SQLITE_FILEPATH("database.sqlite.filepath"),
     HEADER("output.header"),
     DELIMITER("output.delimiter"),
-    DOUBLEQUOTE("output.doublequote"),
-    HOGE("hoge");
+    DOUBLEQUOTE("output.doublequote");
 
     private static Properties properties;
     
@@ -36,4 +36,6 @@ public enum PropertiesEnum {
     public String getPropertiesValue() {
         return properties.getProperty(this.key);
     }
+    
+    
 }
