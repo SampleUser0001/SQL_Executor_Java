@@ -8,35 +8,38 @@ public enum DatabaseEnum {
     Oracle("jdbc:oracle:thin:@%s:%d/%s") {
         @Override
         protected String generateUrl() {
-            return String.format(
-                this.urlFormat,
+            return this.generateUrl(
                 PropertiesEnum.HOST.getPropertiesValue(),
                 Integer.parseInt(PropertiesEnum.PORT.getPropertiesValue()),
                 PropertiesEnum.SCHEMA.getPropertiesValue()
             );
         }
-        
         @Override
-        public Connection generateConnection() throws SQLException {
-            return DriverManager.getConnection(
+        protected Connection generateConnection() throws SQLException {
+            return this.generateConnection(
                 this.generateUrl(),
                 PropertiesEnum.USER.getPropertiesValue(),
-                PropertiesEnum.PASSWORD.getPropertiesValue()
-            );
+                PropertiesEnum.PASSWORD.getPropertiesValue());
         }
     },
     SQLite("jdbc:sqlite:%s") {
         @Override
         protected String generateUrl() {
-            return String.format(
-                this.urlFormat,
-                PropertiesEnum.SQLITE_FILEPATH.getPropertiesValue()
-            );
+            return this.generateUrl(PropertiesEnum.SQLITE_FILEPATH.getPropertiesValue());
         }
-        
         @Override
-        public Connection generateConnection() throws SQLException {
-            return DriverManager.getConnection(this.generateUrl());
+        protected Connection generateConnection() throws SQLException {
+            return this.generateConnection(this.generateUrl());
+        }
+    },
+    Access("jdbc:ucanaccess://%s") {
+        @Override
+        protected String generateUrl() {
+            return this.generateUrl(PropertiesEnum.ACCESS_FILEPATH.getPropertiesValue());
+        }
+        @Override
+        protected Connection generateConnection() throws SQLException {
+            return this.generateConnection(this.generateUrl());
         }
     };
     
@@ -47,11 +50,25 @@ public enum DatabaseEnum {
     }
 
     protected abstract String generateUrl();
-    protected abstract Connection generateConnection() throws SQLException ;
+    protected String generateUrl(String host, int port, String schema) {
+        return String.format(this.urlFormat, host, port, schema);
+    }
+    protected String generateUrl(String filepath) {
+        return String.format(this.urlFormat, filepath);
+    }
+    
+    protected abstract Connection generateConnection() throws SQLException;
+    protected Connection generateConnection(String url, String user, String pass) throws SQLException {
+        return DriverManager.getConnection(url, user, pass);
+    }
+    protected Connection generateConnection(String url) throws SQLException {
+        return DriverManager.getConnection(url);
+    }
+    
     public static Connection getConnection() throws SQLException {
         return DatabaseEnum.valueOf(PropertiesEnum.DATABASE.getPropertiesValue())
                            .generateConnection();
     }
     
-    
+
 }

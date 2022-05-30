@@ -14,6 +14,7 @@ public enum PropertiesEnum {
     PASSWORD("database.pass"),
     SCHEMA("database.schema"),
     SQLITE_FILEPATH("database.sqlite.filepath"),
+    ACCESS_FILEPATH("database.access.filepath"),
     HEADER("output.header"),
     DELIMITER("output.delimiter"),
     DOUBLEQUOTE("output.doublequote");
