@@ -1,5 +1,6 @@
 target/*
-target/SQLExecutor*dependencies.jar 
+!target/SQLExecutor*dependencies.jar 
+
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
