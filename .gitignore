@@ -1,5 +1,5 @@
 target/*
-target/SQLExecutor*dependencies.jar 
+!target/SQLExecutor*dependencies.jar 
 pom.xml.tag
 pom.xml.releaseBackup
 pom.xml.versionsBackup
@@ -18,4 +18,7 @@ buildNumber.properties
 
 # Sample
 /output
+/src/test/resources/output/*
 /logs
+
+.python-version

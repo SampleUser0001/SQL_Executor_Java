@@ -1,7 +1,7 @@
 package tool.sqlexecutor;
 
-import java.lang.StringBuffer;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.StringJoiner;
 import java.util.stream.Collectors;
 import java.io.BufferedWriter;
@@ -12,7 +12,6 @@ import java.nio.charset.Charset;
 import java.nio.file.StandardOpenOption;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -32,9 +31,6 @@ import java.io.IOException;
  */
 public class App {
     private Logger logger = LogManager.getLogger();
-    
-    @Getter
-    private List<String> columnList;
     
     @Getter
     private String sql;
@@ -58,7 +54,6 @@ public class App {
         this.load(args);
         String result = this.executeSQL(
             this.sql,
-            this.columnList,
             Boolean.parseBoolean(PropertiesEnum.HEADER.getPropertiesValue()),
             PropertiesEnum.DELIMITER.getPropertiesValue()
         );
@@ -78,10 +73,6 @@ public class App {
         logger.info(String.format("PROPERTIES_PATH : %s", PROPERTIES_PATH));
         PropertiesEnum.load(Paths.get(PROPERTIES_PATH));
         
-        final String COLUMN_LIST_FILE = args[argsIndex++];
-        logger.info(String.format("COLUMN_LIST_FILE : %s", COLUMN_LIST_FILE));
-        this.columnList = Files.readAllLines(Paths.get(COLUMN_LIST_FILE));
-
         final String SQL_FILE_PATH = args[argsIndex++];
         logger.info(String.format("SQL_FILE_PATH : %s", SQL_FILE_PATH));
         this.sql = Files.lines(Paths.get(SQL_FILE_PATH))
@@ -110,7 +101,6 @@ public class App {
      */
     public String executeSQL(
         String sql,
-        List<String> columnList,
         boolean header,
         String delimiter) {
 
@@ -120,24 +110,31 @@ public class App {
         try (Connection conn = DatabaseEnum.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql.toString())) {
             try (ResultSet rs = ps.executeQuery()){
-                    if(Boolean.parseBoolean(PropertiesEnum.HEADER.getPropertiesValue())) {
-                        builder.append(
-                            this.dq + 
-                            columnList.stream()
-                                      .collect(Collectors.joining(this.dq + PropertiesEnum.DELIMITER.getPropertiesValue() + this.dq))
-                            + this.dq
-                        );
-                        builder.append(System.getProperty("line.separator"));
-                    }
-                    while (rs.next()){
-                        StringJoiner joiner = new StringJoiner(PropertiesEnum.DELIMITER.getPropertiesValue());
-                        for(String column : columnList) {
-                            joiner.add(this.dq + rs.getString(column) + this.dq);
-                        }
-                        builder.append(joiner.toString());
-                        builder.append(System.getProperty("line.separator"));
-                    }
+                // カラム名取得
+                List<String> columnList = new ArrayList<String>();
+                int columnCount = rs.getMetaData().getColumnCount();
+                for (int i = 1; i <= columnCount; i++) {
+                    columnList.add(rs.getMetaData().getColumnName(i));
                 }
+
+                if(Boolean.parseBoolean(PropertiesEnum.HEADER.getPropertiesValue())) {
+                    builder.append(
+                        this.dq + 
+                        columnList.stream()
+                                    .collect(Collectors.joining(this.dq + PropertiesEnum.DELIMITER.getPropertiesValue() + this.dq))
+                        + this.dq
+                    );
+                    builder.append(System.getProperty("line.separator"));
+                }
+                while (rs.next()){
+                    StringJoiner joiner = new StringJoiner(PropertiesEnum.DELIMITER.getPropertiesValue());
+                    for(String column : columnList) {
+                        joiner.add(this.dq + rs.getString(column) + this.dq);
+                    }
+                    builder.append(joiner.toString());
+                    builder.append(System.getProperty("line.separator"));
+                }
+            }
         } catch (SQLException e) {
             logger.error(e);
             e.printStackTrace();
