@@ -19,3 +19,5 @@ buildNumber.properties
 # Sample
 /output
 /logs
+
+.python-version
