@@ -1,1 +1,1 @@
-select id, value from sample_table
+select * from sample_table;
